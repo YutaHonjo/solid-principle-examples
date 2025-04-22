@@ -1,0 +1,18 @@
+name: Auto assign
+on:
+  pull_request:
+    types: ["opened"]
+permissions:
+  pull-requests: write
+  repository-projects: read
+jobs:
+  assign:
+    if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' || toJSON(github.event.pull_request.assignees) == '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - run: gh pr edit "$PULL_NUMBER" --repo "$REPOSITORY" --add-reviewer "@YutaHonjo" --add-reviewer "@ChaudharyDeepanshu01"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.event.repository.full_name }}
